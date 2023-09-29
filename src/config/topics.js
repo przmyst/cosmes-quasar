@@ -13,6 +13,11 @@ export default () => [
 		topic: 'wallet',
 		subject: 'account',
 		type: 'AsyncSubject'
+	},
+	{
+		topic: 'terra',
+		subject: 'lcd',
+		type: 'AsyncSubject'
 	}
 ]
 

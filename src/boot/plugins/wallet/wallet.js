@@ -9,9 +9,7 @@ import {
 	reactive
 } from 'vue'
 import {
-	filter,
-	take,
-	tap
+	filter, take, tap
 } from 'rxjs/operators'
 
 import {
@@ -75,7 +73,7 @@ const createWallet = () => {
 		}
 	}
 
-	const ConnectWallet = async (controller) => {
+	const ConnectWallet = () => {
 		WalletState.loading = true
 		WalletState.showDialog = true
 		Init()

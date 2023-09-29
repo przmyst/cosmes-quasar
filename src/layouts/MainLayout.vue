@@ -31,9 +31,11 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
-import {useWallet} from "boot/plugins/wallet/wallet";
-import WalletDialog from "components/Wallet.vue";
+import {defineComponent} from 'vue'
+import {useWallet} from 'boot/plugins/wallet/wallet'
+import WalletDialog from 'components/Wallet.vue'
+import {useTerra} from 'boot/plugins/terra/terra'
+import {LCDClient} from '@terra-money/terra.js'
 
 export default defineComponent({
   name: 'MainLayout',
@@ -42,6 +44,9 @@ export default defineComponent({
   setup () {
 
     const { WalletState, ConnectWallet, DisconnectWallet } = useWallet()
+    const {InjectTerra} = useTerra()
+
+    InjectTerra(LCDClient)
 
     return {
       ConnectWallet,

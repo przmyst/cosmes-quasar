@@ -2,7 +2,7 @@ import {
 	route
 } from 'quasar/wrappers'
 import {
-	createRouter, createMemoryHistory, createWebHistory, createWebHashHistory
+	createMemoryHistory, createRouter, createWebHashHistory, createWebHistory
 } from 'vue-router'
 import routes from './routes'
 
