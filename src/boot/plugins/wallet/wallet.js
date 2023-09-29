@@ -13,11 +13,17 @@ import {
 } from 'rxjs/operators'
 
 import {
+	from,
 	interval
 } from 'rxjs'
 import {
-	CONTROLLERS, getGasPrice, getRpc
+	chainInfos,
+	CONTROLLERS
 } from 'boot/util/cosmes'
+import {
+	switchMap
+} from 'rxjs'
+import Logger from 'boot/util/Logger$'
 
 const [WalletSymbol, useWallet] = initProvider('WalletSymbol')
 
@@ -35,25 +41,18 @@ const createWallet = () => {
 		Message
 	} = useTopics
 
-	async function Connect(type = 'station', chainIds = ['columbus-5'], controller_type = 'station') {
-		try {
-			const chainInfos = chainIds.map((chainId) => ({
-				chainId,
-				rpc: getRpc(chainId),
-				gasPrice: getGasPrice(chainId),
-			}))
+	async function Connect(controller_type, connection_type) {
 
-			const controller = await CONTROLLERS[controller_type].connect(type, chainInfos)
+		const controller = await CONTROLLERS[connection_type].connect(controller_type, chainInfos)
 
-			const wallet = controller.get('columbus-5')
+		const wallet = controller.get('columbus-5')
 
-			Message('wallet', 'account', wallet)
+		localStorage.setItem('cosmes-type', controller_type)
+		localStorage.setItem('cosmes-controller', connection_type)
 
-			localStorage.setItem('cosmes-type', type)
-			localStorage.setItem('cosmes-controller', controller_type)
-		} catch (e) {
-			console.log(e)
-		}
+		Message('wallet', 'account', wallet)
+
+		return `${controller_type} ${connection_type}`
 	}
 
 	const Init = () => {
@@ -66,7 +65,6 @@ const createWallet = () => {
 			if (localStorage.getItem('cosmes-type')) {
 				Connect(
 					localStorage.getItem('cosmes-type'),
-					['columbus-5'],
 					localStorage.getItem('cosmes-controller'))
 					.catch(console.log)
 			}
@@ -89,14 +87,14 @@ const createWallet = () => {
 		.subscribe(console.log)
 
 	Topic('wallet', 'selected')
-		.pipe(tap(controller => {
-			if (controller === 'walletconnect') {
-				Connect('walletconnect', ['columbus-5'], 'station').catch(console.log)
+		.pipe(switchMap(connection_type => {
+			if (connection_type === 'walletconnect') {
+				return from(Connect('walletconnect', 'station'))
 			} else {
-				Connect('extension', ['columbus-5'], controller).catch(console.log)
+				return from(Connect('extension', connection_type))
 			}
 		}))
-		.subscribe()
+		.subscribe(Logger('Wallet Selected', true))
 
 	const DisconnectWallet = async () => {
 		localStorage.removeItem('cosmes-type')

@@ -107,3 +107,11 @@ export function getDenom(chain) {
 		throw new Error('Unknown chain')
 	}
 }
+
+const chainIds = ['columbus-5']
+
+export const chainInfos = chainIds.map((chainId) => ({
+	chainId,
+	rpc: getRpc(chainId),
+	gasPrice: getGasPrice(chainId),
+}))

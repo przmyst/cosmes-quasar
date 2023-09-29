@@ -12,7 +12,7 @@ export default () => [
 	{
 		topic: 'wallet',
 		subject: 'account',
-		type: 'AsyncSubject'
+		type: 'Subject'
 	},
 	{
 		topic: 'terra',
